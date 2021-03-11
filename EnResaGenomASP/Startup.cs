@@ -14,11 +14,16 @@ namespace EnResaGenomASP
             //här får jag tag på mitt värde och skriver ut värdet i output, 
             Configuration = configuration;
             Debug.WriteLine(Configuration["MyProperty"]);
+            //Genom AsEnumerable-metoden i en forech-lop kan vi skriva ut en lista med alla instäööningar som laddats in.
+            //foreach-metoden skiver ut samtliga key och value-par
+            foreach (var prop in configuration.AsEnumerable())
+            {
+                Debug.WriteLine( $"key [{prop.Key}] \n value [{prop.Value}]\"" );
+            }
+
         }
 
-        public IConfiguration Configuration { get; }
-        
-        
+        public IConfiguration Configuration { get;}
         // This method gets called by the runtime. Use this method to add services to the container.
         public void ConfigureServices(IServiceCollection services)
         {
