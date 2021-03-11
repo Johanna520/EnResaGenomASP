@@ -8,6 +8,7 @@ using System.Threading.Tasks;
 
 namespace EnResaGenomASP.Pages
 {
+    //IndexModel-klassen är en sk. service som ansvarar för just denna sida i vår hemsida 
     public class IndexModel : PageModel
     {
         private readonly ILogger<IndexModel> _logger;
@@ -15,11 +16,14 @@ namespace EnResaGenomASP.Pages
         public IndexModel(ILogger<IndexModel> logger)
         {
             _logger = logger;
+           
+           
         }
+      
 
         public void OnGet()
         {
-
+            _logger.LogDebug("en http request för index.html");
         }
     }
 }

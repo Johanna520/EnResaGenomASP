@@ -7,6 +7,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
 using System.Diagnostics;
+using System.Threading;
 
 namespace EnResaGenomASP
 {
@@ -31,9 +32,21 @@ namespace EnResaGenomASP
             });
             //Jag kallar på Build() i variabeln webHost
             IHost webHost = hostBuilder.Build();
-            //i webHost kallar jag sedan på Run();
+            //i webHost kallar jag sedan på Run(); Run() kommer att lyssna efter http anrop från klienten. 
             webHost.Run();          
         }
     
+    }
+}
+public class MyBackgroundProcess : IHostedService
+{
+    public Task StartAsync(CancellationToken cancellationToken)
+    {
+        throw new NotImplementedException();
+    }
+
+    public Task StopAsync(CancellationToken cancellationToken)
+    {
+        throw new NotImplementedException();
     }
 }
