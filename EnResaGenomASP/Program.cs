@@ -9,10 +9,11 @@ using System.Threading.Tasks;
 using System.Diagnostics;
 
 namespace EnResaGenomASP
-{//Här startar programmet - Main
+{
     public class Program
     {
-        public static void Main(string[] args)     
+        public static void Main(string[] args)
+        //Här startar programmet - Main
         {
             //loggar en strin i vs output konsollen
             Debug.WriteLine("HELLO, lets start debug!");
