@@ -42,6 +42,7 @@ namespace EnResaGenomASP
 
             //här registrerar vi tjänsten MyBackgroundProcess, som finns i Program.cs med hjälp av addHostService.
             services.AddHostedService<MyBackgroundProcess>();
+            services.Configure<MyBackgroundProcessOptions>(Configuration.GetSection("MyBackgroundProcess"));
         }
 
         // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.
