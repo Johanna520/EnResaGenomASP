@@ -26,10 +26,21 @@ namespace EnResaGenomASP
         public IConfiguration Configuration { get;}
         // This method gets called by the runtime. Use this method to add services to the container.
 
+
         //ConfigureServices kallas i byggfasen .Build() i Program.cs
+        //Här läggs alla services klasser till och ställs in.
+        //Om en sida behöver en HttpClient för ex OpenWeather eller DatabaseContext för att hitta ino från en databas
+        //behöver jag lägga in de klasserna som egna Services, för att Razor Pages tjänsterna ska kunna använda dem.
+        //här ställer man till exempel även om vissa Razer Pages tjänster endast är tillgängliga för inloggade användare.
+
         public void ConfigureServices(IServiceCollection services)
         {
+            //addRazorPages() hittar och lägger in samtliga Razor Pages automatiskt
             services.AddRazorPages();
+            //addHostServices används när man vill lägga till en klass som ärver av IHostedService, denna tjänst startar
+            //när vi kör Run() i Program.cs
+
+            //här registrerar vi tjänsten MyBackgroundProcess, som finns i Program.cs med hjälp av addHostService.
             services.AddHostedService<MyBackgroundProcess>();
         }
 

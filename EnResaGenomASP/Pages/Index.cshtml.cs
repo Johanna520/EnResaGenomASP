@@ -23,6 +23,10 @@ namespace EnResaGenomASP.Pages
 
         public void OnGet()
         {
+            //LogInformation är till för informativa meddelanden och inte i debuggsyfte. därför
+            //använder vi .LogDebug istället. Men då loggnivån i appsettings.Development.json är instället
+            //per default på "Information" måste man ändra detta till "debug" innan .LogDebug kan användas. 
+
             _logger.LogDebug("en http request för index.html");
         }
     }

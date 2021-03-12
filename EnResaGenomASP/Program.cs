@@ -38,15 +38,40 @@ namespace EnResaGenomASP
     
     }
 }
+
+//jag skapar en ny klass som tar in implementerar IHostedService
 public class MyBackgroundProcess : IHostedService
 {
+
+   //Klassens logger ser ut som indexcshtml.cs
+    public readonly ILogger<MyBackgroundProcess> _logger;
+
+    public MyBackgroundProcess (ILogger<MyBackgroundProcess> logger)
+    {
+        _logger = logger;
+    }
+    //Task.Run() startar ett parallelt arbete Dess resultat returnerar jag direkt. 
+    //Som inargument skickar jag med metoden Repeat
     public Task StartAsync(CancellationToken cancellationToken)
     {
-        throw new NotImplementedException();
+        return Task.Run(Repeat);
     }
 
+    //Metoden Repeat() är en async metod som returnerar och använder await task.Delay() i en oändlig loop
+    //för att för att regelbunder logga något var 10 sek.
+     async void Repeat()
+    {
+        while(true)
+        {
+            await Task.Delay(10000);
+            _logger.LogInformation("Ten seconds has passed");
+        }
+    }
+
+
+    //StopAsync kan endast returnera Task.CompletedTask.
     public Task StopAsync(CancellationToken cancellationToken)
     {
-        throw new NotImplementedException();
+        return Task.CompletedTask;
     }
 }
