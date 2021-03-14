@@ -8,6 +8,7 @@ using System.Threading.Tasks;
 using Microsoft.AspNetCore.Http;
 using System.Text;
 using System;
+
 namespace EnResaGenomASP
 {
     public class Startup
@@ -38,6 +39,17 @@ namespace EnResaGenomASP
 
         public void ConfigureServices(IServiceCollection services)
         {
+            //5.4 Vi ska lägga in en varning om Cookie, genonm https://docs.microsoft.com/en-us/aspnet/core/security/gdpr?view=aspnetcore-5.0
+            // bygger vi denna varning. 
+            services.Configure<CookiePolicyOptions>( options =>
+                {
+                // denna lambda bestämmer hurvida användaren samtycker till icke-väsentlig cookies behövs för en given begäran
+                options.CheckConsentNeeded = context => true;
+
+                    // denna kod kräver:  using Microsoft.AspNetCore.Http;
+                 options.MinimumSameSitePolicy = SameSiteMode.None;
+
+                });
             //4. addRazorPages() hittar och lägger in samtliga Razor Pages automatiskt
             services.AddRazorPages();
             //4. addHostServices används när man vill lägga till en klass som ärver av IHostedService, denna tjänst startar
@@ -90,6 +102,9 @@ namespace EnResaGenomASP
             app.UseHttpsRedirection();
             app.UseStaticFiles();
 
+            //5.4 används för varning om Cookie 
+            app.UseCookiePolicy();
+
             app.UseRouting();
 
             app.UseAuthorization();
@@ -98,7 +113,7 @@ namespace EnResaGenomASP
             // Koden nedan ser till att rätt url eller index.html går till rätt Endpoint
             app.UseEndpoints(endpoints =>
             {
-                // 5.1 om vi kommenterar ut/ta bort  endpoints.MapRazorPages(); hittar vi inte index.html längre och ett error-meddelande skrivs ut på sidan.
+                // 5.1 om vi kommenterar ut/ta bort  endpoints.MapRazorPages(); hittar vi inte index.html längre och Error.cshtml skrivs ut på sidan.
                 endpoints.MapRazorPages();
 
                 //5.2 Efter att skapat asynk Task WriteHTMLResponse() skapar jag en endpoints.MapGet() och som inargument get
