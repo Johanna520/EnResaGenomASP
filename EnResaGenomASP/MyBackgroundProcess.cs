@@ -12,52 +12,53 @@ using Microsoft.Extensions.Options;
 
 namespace EnResaGenomASP
 {
-    //jag skapar en ny klass som tar in implementerar IHostedService
+    //4.3 jag skapar en ny klass som tar in implementerar IHostedService
     public class MyBackgroundProcess : IHostedService
     {
-        //Klassens logger ser ut som indexcshtml.cs
+        //4.3 Klassens logger ser ut som indexcshtml.cs
         public readonly ILogger<MyBackgroundProcess> _logger;
 
 
 
-        // för att kunna använda MyBackgroundProcessOptions tjänster lägger vjag till en privat tjänst som kan
+        // 4.4 för att kunna använda MyBackgroundProcessOptions tjänster lägger vjag till en privat tjänst som kan
         //referera till potions objektet, lik _logger, objektet döper jag till _options.
         private readonly MyBackgroundProcessOptions _options;
 
         public MyBackgroundProcess (ILogger<MyBackgroundProcess> logger,
-            //jag anväder   IOptions<MyBackgroundProcessOptions> Options) i kosntruktorn för att få tag på tjänsten.
+            //4.4 Jag anväder   IOptions<MyBackgroundProcessOptions> Options) i kosntruktorn för att få tag på tjänsten.
             IOptions<MyBackgroundProcessOptions> Options)
         {
             _logger = logger;
 
-            // i options.value finns options objekt 
+            // 4.4 i options.value finns options objekt 
             _options = Options.Value;
         }
-        //Task.Run() startar ett parallelt arbete Dess resultat returnerar jag direkt. 
+        //4.3 Task.Run() startar ett parallelt arbete resultat returnerar jag direkt. 
         //Som inargument skickar jag med metoden Repeat
         public Task StartAsync(CancellationToken cancellationToken)
         {
             return Task.Run(Repeat);
 
         }
+      
 
-        //Metoden Repeat() är en async metod som returnerar och använder await task.Delay() i en oändlig loop
+        //4.3 Metoden Repeat() är en async metod som returnerar och använder await task.Delay() i en oändlig loop
         //för att för att regelbunder logga något ex var 10 sek.
         async void Repeat()
         {
             while (true)
             {
-                //await Task.Delay(10000);
+                //4.3 await Task.Delay(10000);
                 //_logger.LogInformation("Ten seconds has passed");
 
-                // jag använder _options.Delay för att kalla på task.delay
+                // 4.4 jag använder _options.Delay för att kalla på task.delay
                 await Task.Delay(_options.Delay * 1000);
                 _logger.LogInformation(_options.Delay + " second(s) has passed");
             }
         }
 
 
-        //StopAsync kan endast returnera Task.CompletedTask.
+        //4.3 StopAsync kan endast returnera Task.CompletedTask.
         public Task StopAsync(CancellationToken cancellationToken)
         {
             return Task.CompletedTask;

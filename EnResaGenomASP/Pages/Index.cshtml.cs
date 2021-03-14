@@ -8,7 +8,7 @@ using System.Threading.Tasks;
 
 namespace EnResaGenomASP.Pages
 {
-    //IndexModel-klassen är en sk. service som ansvarar för just denna sida i vår hemsida 
+    //4. IndexModel-klassen är en sk. service som ansvarar för just denna sida i vår hemsida 
     public class IndexModel : PageModel
     {
         private readonly ILogger<IndexModel> _logger;
@@ -21,8 +21,8 @@ namespace EnResaGenomASP.Pages
 
         public void OnGet()
         {
-            //LogInformation är till för informativa meddelanden och inte i debuggsyfte. därför
-            //använder vi .LogDebug istället. Men då loggnivån i appsettings.Development.json är instället
+            //4. LogInformation är till för informativa meddelanden och inte i debuggsyfte. därför
+            //använder vi .LogDebug istället. Men då loggnivån i appsettings.Development.json är inställt
             //per default på "Information" måste man ändra detta till "debug" innan .LogDebug kan användas. 
 
             _logger.LogDebug("en http request för index.html");

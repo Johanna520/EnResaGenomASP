@@ -4,6 +4,9 @@ using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
 using System.Diagnostics;
+using System.Threading.Tasks;
+using Microsoft.AspNetCore.Http;
+using System.Text;
 
 namespace EnResaGenomASP
 {
@@ -11,11 +14,11 @@ namespace EnResaGenomASP
     {
         public Startup(IConfiguration configuration)
         {
-            //här får jag tag på mitt värde och skriver ut värdet i output, 
+            //3. här får jag tag på mitt värde och skriver ut värdet i output, 
             Configuration = configuration;
             Debug.WriteLine(Configuration["MyProperty"]);
-            //Genom AsEnumerable-metoden i en forech-loop kan vi skriva ut en lista med alla instäööningar som laddats in.
-            //foreach-metoden skiver ut samtliga key och value-par
+            //3. Genom AsEnumerable-metoden i en forech-loop kan vi skriva ut en lista med alla instäööningar som laddats in.
+            //3. foreach-metoden skiver ut samtliga key och value-par
             foreach (var prop in configuration.AsEnumerable())
             {
                 Debug.WriteLine( $"key [{prop.Key}] \n value [{prop.Value}]\"" );
@@ -27,7 +30,7 @@ namespace EnResaGenomASP
         // This method gets called by the runtime. Use this method to add services to the container.
 
 
-        //ConfigureServices kallas i byggfasen .Build() i Program.cs
+        //4. ConfigureServices kallas i byggfasen .Build() i Program.cs
         //Här läggs alla services klasser till och ställs in.
         //Om en sida behöver en HttpClient för ex OpenWeather eller DatabaseContext för att hitta ino från en databas
         //behöver jag lägga in de klasserna som egna Services, för att Razor Pages tjänsterna ska kunna använda dem.
@@ -35,17 +38,17 @@ namespace EnResaGenomASP
 
         public void ConfigureServices(IServiceCollection services)
         {
-            //addRazorPages() hittar och lägger in samtliga Razor Pages automatiskt
+            //4. addRazorPages() hittar och lägger in samtliga Razor Pages automatiskt
             services.AddRazorPages();
-            //addHostServices används när man vill lägga till en klass som ärver av IHostedService, denna tjänst startar
+            //4. addHostServices används när man vill lägga till en klass som ärver av IHostedService, denna tjänst startar
             //när vi kör Run() i Program.cs
 
-            //här registrerar vi tjänsten MyBackgroundProcess, som finns i Program.cs med hjälp av addHostService.
+            //4.3 här registrerar vi tjänsten MyBackgroundProcess, som finns i Program.cs med hjälp av addHostService.
             services.AddHostedService<MyBackgroundProcess>();
 
        
 
-            //Vi kopplar ihop klassen MyBackgroundProcessOptions med json och gör den tillgänglig som en Servise. 
+            //4.4 Vi kopplar ihop klassen MyBackgroundProcessOptions med json och gör den tillgänglig som en Servise. 
             //detta gör jag genom att kallas på .Configure metoden och skickar med klassnamnet samt rätt
             // sektion från json filen, detta görs genom Configuration.GetSection("MyBackgroundProcess")
             services.Configure<MyBackgroundProcessOptions>(Configuration.GetSection("MyBackgroundProcess"));
@@ -53,9 +56,19 @@ namespace EnResaGenomASP
 
         // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.
 
-        //Configure kallas på när webHost kör igång i Program.cs (.Run()) 
+        //4. Configure kallas på när webHost kör igång i Program.cs (.Run()) 
+
+        //5. SIsta biten av startup.cs körs direkt efter att vikallat på .Run() i Program.cs. 
+        // Här inne stller vi in vilka sk. Middleware som ska användas. 
+        // vi ställer in alla trappsteg på resan från ett http paketet anländer 
+        // - webHost från en klient - vi når rätt Razor Page för ändamålet. Därefter sker 
+        // hela trappan baklänges: Razor Pages skapar ett hmlt svar som skickas upp genom samma Middleware steg
+        // tills en http 200 OK genereras och skickas tillbaka till klienten. (se bild i pp föreläsning1 ASP.Core Net)
+        // Alla steg från ExceptionHandler till Authorization m.m sker här. 
         public void Configure(IApplicationBuilder app, IWebHostEnvironment env)
         {
+            //5. för varje app.Use...() finns tillhörande inställningar som alla står besrkivna på msdn. (https://docs.microsoft.com/en-us/aspnet/core/fundamentals/middleware/?view=aspnetcore-5.0#built-in-middleware)
+            // det är också viktigt att ha kolla på vilken orning metoderna kallas på. 
             if (env.IsDevelopment())
             {
                 app.UseDeveloperExceptionPage();
@@ -74,10 +87,25 @@ namespace EnResaGenomASP
 
             app.UseAuthorization();
 
+            // 5. endpoint hänvisar till slutet av vår hemsida, det kan vara MVC eller en Raxor Page.
+            // Koden nedan ser till att rätt url eller index.html går till rätt Endpoint
             app.UseEndpoints(endpoints =>
             {
+                // 5.1 om vi kommenterar ut/ta bort  endpoints.MapRazorPages(); hittar vi inte index.html längre och ett error-meddelande skrivs ut på sidan.
                 endpoints.MapRazorPages();
+
+                //5.2 Efter att skapat asynk Task WriteHTMLResponse() skapar jag en endpoints.MapGet() och som inargument get
+                // skriver jag en egen url och kallar på WriteHTMLResponse() metoden. På webbplatsen skriver jag sedan ut: 
+                // webrooten/JohannasSida
+                endpoints.MapGet("/JohannasSida", WriteHTMLResponse);
             });
+        }
+        //5.2 Jag skapar en async Task för att manuellt ställa in koppling mellan inkommande url och sidor.
+     
+        private async Task WriteHTMLResponse(HttpContext context)
+        {
+            var message = Encoding.ASCII.GetBytes("<p>Johannas html!</p>");
+            await context.Response.Body.WriteAsync(message, 0, message.Length);
         }
     }
 }

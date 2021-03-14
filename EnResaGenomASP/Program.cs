@@ -16,23 +16,23 @@ namespace EnResaGenomASP
         public static void Main(string[] args)
         //Här startar programmet - Main
         {
-            //loggar en string i vs output konsollen
+            //1. loggar en string i vs output konsollen
             Debug.WriteLine("HELLO, lets start debug!");
-            //skriver ut en string i konsollen som startar upp
+            //1. skriver ut en string i konsollen som startar upp
             Console.WriteLine("HELLO, lets start!");
 
-            //här skriver jag om creatHostBuilder så allt sker i Main-metoden istället.
+            //2. här skriver jag om creatHostBuilder så allt sker i Main-metoden istället.
 
-            //jag skapar en variabel: HotstBuilder och lägger DefaultBuilder där i. 
+            //2. jag skapar en variabel: HotstBuilder och lägger DefaultBuilder där i. 
             IHostBuilder hostBuilder = Host.CreateDefaultBuilder(args);
-            //jag kallar på ConfigureWebHostDefaults, och sparar ner resultatet i webHost. 
+            //2. jag kallar på ConfigureWebHostDefaults, och sparar ner resultatet i webHost. 
             hostBuilder.ConfigureWebHostDefaults(webBuilder =>
-            {//här berättar vi att att man ska använda startup-classen och dess metoder. 
+            {//2. här berättar vi att att man ska använda startup-classen och dess metoder. 
                 webBuilder.UseStartup<Startup>();
             });
-            //Jag kallar på Build() i variabeln webHost
+            //2. Jag kallar på Build() i variabeln webHost
             IHost webHost = hostBuilder.Build();
-            //i webHost kallar jag sedan på Run(); Run() kommer att lyssna efter http anrop från klienten. 
+            //2. i webHost kallar jag sedan på Run(); Run() kommer att lyssna efter http anrop från klienten. 
             webHost.Run();          
         }
     
