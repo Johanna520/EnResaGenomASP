@@ -1,8 +1,9 @@
 @using Microsoft.AspNetCore.Http.Features
 
 
-       <!--5.4 Vi ska lägga in en varning om Cookie, genonm https://docs.microsoft.com/en-us/aspnet/core/security/gdpr?view=aspnetcore-5.0
-            // bygger vi denna varning.-->
+       <!--5.4 Vi ska lägga in en varning om Cookie, med hjälp av
+         https://docs.microsoft.com/en-us/aspnet/core/security/gdpr?view=aspnetcore-5.0
+         bygger vi denna varning.-->
 @{
     var consentFeature = Context.Features.Get<ITrackingConsentFeature>();
     var showBanner = !consentFeature?.CanTrack ?? false;
