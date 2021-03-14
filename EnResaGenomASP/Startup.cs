@@ -42,6 +42,12 @@ namespace EnResaGenomASP
 
             //här registrerar vi tjänsten MyBackgroundProcess, som finns i Program.cs med hjälp av addHostService.
             services.AddHostedService<MyBackgroundProcess>();
+
+       
+
+            //Vi kopplar ihop klassen MyBackgroundProcessOptions med json och gör den tillgänglig som en Servise. 
+            //detta gör jag genom att kallas på .Configure metoden och skickar med klassnamnet samt rätt
+            // sektion från json filen, detta görs genom Configuration.GetSection("MyBackgroundProcess")
             services.Configure<MyBackgroundProcessOptions>(Configuration.GetSection("MyBackgroundProcess"));
         }
 

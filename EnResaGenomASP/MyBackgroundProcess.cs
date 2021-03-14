@@ -17,12 +17,20 @@ namespace EnResaGenomASP
     {
         //Klassens logger ser ut som indexcshtml.cs
         public readonly ILogger<MyBackgroundProcess> _logger;
+
+
+
+        // för att kunna använda MyBackgroundProcessOptions tjänster lägger vjag till en privat tjänst som kan
+        //referera till potions objektet, lik _logger, objektet döper jag till _options.
         private readonly MyBackgroundProcessOptions _options;
 
-        public MyBackgroundProcess (ILogger<MyBackgroundProcess> logger, 
+        public MyBackgroundProcess (ILogger<MyBackgroundProcess> logger,
+            //jag anväder   IOptions<MyBackgroundProcessOptions> Options) i kosntruktorn för att få tag på tjänsten.
             IOptions<MyBackgroundProcessOptions> Options)
         {
             _logger = logger;
+
+            // i options.value finns options objekt 
             _options = Options.Value;
         }
         //Task.Run() startar ett parallelt arbete Dess resultat returnerar jag direkt. 
@@ -41,6 +49,8 @@ namespace EnResaGenomASP
             {
                 //await Task.Delay(10000);
                 //_logger.LogInformation("Ten seconds has passed");
+
+                // jag använder _options.Delay för att kalla på task.delay
                 await Task.Delay(_options.Delay * 1000);
                 _logger.LogInformation(_options.Delay + " second(s) has passed");
             }
