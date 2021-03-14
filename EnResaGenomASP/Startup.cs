@@ -7,7 +7,7 @@ using System.Diagnostics;
 using System.Threading.Tasks;
 using Microsoft.AspNetCore.Http;
 using System.Text;
-
+using System;
 namespace EnResaGenomASP
 {
     public class Startup
@@ -68,7 +68,7 @@ namespace EnResaGenomASP
         public void Configure(IApplicationBuilder app, IWebHostEnvironment env)
         {
             //5. för varje app.Use...() finns tillhörande inställningar som alla står besrkivna på msdn. (https://docs.microsoft.com/en-us/aspnet/core/fundamentals/middleware/?view=aspnetcore-5.0#built-in-middleware)
-            // det är också viktigt att ha kolla på vilken orning metoderna kallas på. 
+            // det är också viktigt att ha kolla på vilken ordning metoderna kallas på. 
             if (env.IsDevelopment())
             {
                 app.UseDeveloperExceptionPage();
@@ -79,6 +79,13 @@ namespace EnResaGenomASP
                 // The default HSTS value is 30 days. You may want to change this for production scenarios, see https://aka.ms/aspnetcore-hsts.
                 app.UseHsts();
             }
+
+            //5.3 jag stoppar in metoden InspectHttpRequeastAndResponse från private async Task InspectHttpRequeastAndRespons för att kunna analysera 
+            // kommande http request och utgeånde http response. För att analysera dessa debuggar jag dessa inuti metoden. 
+
+            // 5.3 i app.Use() använder vi för att lägga in metoden i piplinen. 
+          
+            app.Use(InspectHttpRequeastAndResponse);
 
             app.UseHttpsRedirection();
             app.UseStaticFiles();
@@ -106,6 +113,27 @@ namespace EnResaGenomASP
         {
             var message = Encoding.ASCII.GetBytes("<p>Johannas html!</p>");
             await context.Response.Body.WriteAsync(message, 0, message.Length);
+        }
+
+        //5.3 Här skriver jag min eget "Middleware trappsteg". Detta görs genom att kalla på app.Use()
+        //denna metod låter oss sedan lägga in egna instruktioner om vad soma ska ske när
+        //ett http request kommer. 
+        private async Task InspectHttpRequeastAndResponse(HttpContext context, Func<Task> nextMiddleware)
+        {
+           
+            //här tittar vi på context.Request. Vad skrivs ut i debug: 
+            Debug.WriteLine("Här kommer en http request från : " + context.Request.Host); //localhost: 5001
+            Debug.WriteLine("för att få tag på: " + context.Request.Path); // /
+
+            //Först sker task InspectHttpRequeastAndResponse(). därefter för att kunna referera tll metoden i app.Use()
+            // skriver jag; 
+            await nextMiddleware();
+            //...för att kunna leverera meddelandet vidare till nästa steg i piplinen, måste vi kalla på steget direkt och vänta 
+            // på att resten av piplinen jobbat klart. 
+
+
+            // här tittar vi på context.Response. Vad skrivs ut i debug: 
+            Debug.WriteLine("Servern säger: " + context.Response.StatusCode); // 200
         }
     }
 }
