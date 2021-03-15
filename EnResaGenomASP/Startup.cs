@@ -64,6 +64,11 @@ namespace EnResaGenomASP
             //detta gör jag genom att kallas på .Configure metoden och skickar med klassnamnet samt rätt
             // sektion från json filen, detta görs genom Configuration.GetSection("MyBackgroundProcess")
             services.Configure<MyBackgroundProcessOptions>(Configuration.GetSection("MyBackgroundProcess"));
+
+            //7.2 Jag använder services.AddDirectoryBrowser tllsammans med app.UseDirectoryBrowser() för att göra så att 
+            // jag kan navigera och inspektera alla mina statiska filer i browern. 
+            services.AddDirectoryBrowser();
+
         }
 
         // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.
@@ -107,8 +112,13 @@ namespace EnResaGenomASP
             // Oftast är det enklare för browsen och servern att catcha statiska filer med. 
             //En dynamisk sida är motsatsen till statisk sida. Den dynamiska sidan skan se annorlunda ut beroende på klient
             // och andra samanhang. Enkla html sidor är ex på statiska sidor medan Razor (.cshtml) är dynamiska sidor. 
-
             app.UseStaticFiles();
+
+
+            //7.2 här kan man som inargument ta in en sträng som anger vilken path som ska leda till directory-vyn.
+            // Jag lägger in en sträng för att dubbelkolla att jag kan komma åt directory-vyn via path:en jag angav. 
+            // i webbläsaren skriver jag https://localhost:5001/StaticFiles/ för att dubbelkolla detta. 
+            app.UseDirectoryBrowser("/StaticFiles");
 
             //5.4 används för varning om Cookie 
             app.UseCookiePolicy();
