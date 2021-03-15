@@ -100,6 +100,14 @@ namespace EnResaGenomASP
             app.Use(InspectHttpRequeastAndResponse);
 
             app.UseHttpsRedirection();
+
+            // 7.1 här säger man till att wwwroot ska användas.
+            // wwwroot är en statisk fil. Här finns ex  js, html och css-kod.
+            // Att filerna är statiska betyder att de inte behöver skaps/förändras av en server innan de skickas ut till klientens
+            // Oftast är det enklare för browsen och servern att catcha statiska filer med. 
+            //En dynamisk sida är motsatsen till statisk sida. Den dynamiska sidan skan se annorlunda ut beroende på klient
+            // och andra samanhang. Enkla html sidor är ex på statiska sidor medan Razor (.cshtml) är dynamiska sidor. 
+
             app.UseStaticFiles();
 
             //5.4 används för varning om Cookie 
